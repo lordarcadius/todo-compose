@@ -3,7 +3,6 @@ package com.vipuljha.todo_compose.presentation.todo_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vipuljha.todo_compose.domain.model.Todo
-import com.vipuljha.todo_compose.domain.usecase.AddOrUpdateTodo
 import com.vipuljha.todo_compose.domain.usecase.DeleteTodo
 import com.vipuljha.todo_compose.domain.usecase.GetAllTodos
 import com.vipuljha.todo_compose.domain.usecase.NoParams
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
@@ -27,7 +27,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TodoViewModel @Inject constructor(
-    private val addOrUpdateTodo: AddOrUpdateTodo,
     private val deleteTodo: DeleteTodo,
     private val getAllTodos: GetAllTodos
 ) : ViewModel() {
@@ -37,9 +36,11 @@ class TodoViewModel @Inject constructor(
     private val _state = MutableStateFlow(TodoState())
     val state: StateFlow<TodoState> = _state.asStateFlow()
 
+    private val _effects = MutableSharedFlow<TodoEffect>()
+    val effects = _effects.asSharedFlow()
+
     init {
         bindIntents()
-        sendIntent(TodoIntent.LoadTodos)
     }
 
     fun sendIntent(intent: TodoIntent) {
@@ -60,7 +61,6 @@ class TodoViewModel @Inject constructor(
     private fun handleIntent(intent: TodoIntent): Flow<TodoPartialState> =
         when (intent) {
             TodoIntent.LoadTodos -> loadTodos()
-            is TodoIntent.AddOrUpdate -> addOrUpdate(intent.todo)
             is TodoIntent.Delete -> delete(intent.todo)
         }
 
@@ -76,23 +76,27 @@ class TodoViewModel @Inject constructor(
         emit(TodoPartialState.Error("Failed to load todos"))
     }
 
-    private fun addOrUpdate(todo: Todo): Flow<TodoPartialState> = flow {
-        emit(TodoPartialState.Loading)
-
-        if (addOrUpdateTodo(todo)) {
-            emit(TodoPartialState.TodoSaved)
-        } else {
-            emit(TodoPartialState.Error("Failed to save todo"))
-        }
-    }
-
     private fun delete(todo: Todo): Flow<TodoPartialState> = flow {
-        emit(TodoPartialState.Loading)
 
+        if (todo.id == 0) {
+            emit(TodoPartialState.Error("Nothing to delete"))
+            return@flow
+        }
+
+        emit(TodoPartialState.TodoDeleting)
+
+        val todo = Todo(
+            id = todo.id,
+            title = todo.title,
+            description = todo.description
+        )
         if (deleteTodo(todo)) {
             emit(TodoPartialState.TodoDeleted)
+            _effects.emit(TodoEffect.ShowToast("Todo deleted!"))
         } else {
-            emit(TodoPartialState.Error("Failed to delete todo"))
+            val errorMessage = "Failed to delete todo"
+            emit(TodoPartialState.Error(errorMessage))
+            _effects.emit(TodoEffect.ShowToast(errorMessage))
         }
     }
 
@@ -102,6 +106,7 @@ class TodoViewModel @Inject constructor(
     ): TodoState =
         when (change) {
 
+            TodoPartialState.TodoDeleting,
             TodoPartialState.Loading ->
                 previous.copy(isLoading = true, error = null)
 
@@ -112,7 +117,6 @@ class TodoViewModel @Inject constructor(
                     error = null
                 )
 
-            TodoPartialState.TodoSaved,
             TodoPartialState.TodoDeleted ->
                 previous.copy(isLoading = false)
 
