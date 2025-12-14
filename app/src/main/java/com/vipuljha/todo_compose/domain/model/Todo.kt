@@ -1,5 +1,8 @@
 package com.vipuljha.todo_compose.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Todo(
     val id: Int = 0,
     val title: String,
