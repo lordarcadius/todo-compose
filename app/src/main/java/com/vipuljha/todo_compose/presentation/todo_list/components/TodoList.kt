@@ -1,4 +1,4 @@
-package com.vipuljha.todo_compose.presentation.todo_list
+package com.vipuljha.todo_compose.presentation.todo_list.components
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
@@ -104,6 +105,7 @@ fun TodoItem(
                 )
 
                 ActionButtons(
+                    isCompleted = todo.isCompleted,
                     onEdit = { onEdit(todo) },
                     onDelete = { onDelete(todo) },
                     onDone = { onDone(todo) }
@@ -135,6 +137,7 @@ private fun TodoTimestamps(
 
 @Composable
 private fun ActionButtons(
+    isCompleted: Boolean,
     onDelete: () -> Unit,
     onEdit: () -> Unit,
     onDone: () -> Unit
@@ -151,12 +154,18 @@ private fun ActionButtons(
             Icon(Icons.Outlined.Delete, contentDescription = "Delete")
         }
 
-        FilledTonalIconButton(onClick = onEdit) {
-            Icon(Icons.Outlined.Edit, contentDescription = "Edit")
+        if (!isCompleted) {
+            FilledTonalIconButton(onClick = onEdit) {
+                Icon(Icons.Outlined.Edit, contentDescription = "Edit")
+            }
         }
 
         FilledTonalIconButton(onClick = onDone) {
-            Icon(Icons.Outlined.Done, contentDescription = "Done")
+            if (isCompleted) {
+                Icon(Icons.Outlined.Close, contentDescription = "Undo")
+            } else {
+                Icon(Icons.Outlined.Done, contentDescription = "Done")
+            }
         }
     }
 }

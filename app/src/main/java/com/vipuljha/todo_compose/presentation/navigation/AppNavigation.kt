@@ -14,8 +14,8 @@ import androidx.navigation3.ui.NavDisplay
 import com.vipuljha.todo_compose.core.util.back
 import com.vipuljha.todo_compose.core.util.open
 import com.vipuljha.todo_compose.presentation.todo_edit.TodoEditScreen
-import com.vipuljha.todo_compose.presentation.todo_list.CompletedTodoScreen
-import com.vipuljha.todo_compose.presentation.todo_list.TodoScreen
+import com.vipuljha.todo_compose.presentation.todo_list.completed.CompletedTodoScreen
+import com.vipuljha.todo_compose.presentation.todo_list.uncompleted.TodoScreen
 
 @Composable
 fun AppNavigation(

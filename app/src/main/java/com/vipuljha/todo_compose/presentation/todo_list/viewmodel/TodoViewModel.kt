@@ -1,4 +1,4 @@
-package com.vipuljha.todo_compose.presentation.todo_list
+package com.vipuljha.todo_compose.presentation.todo_list.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +7,10 @@ import com.vipuljha.todo_compose.domain.usecase.AddOrUpdateTodo
 import com.vipuljha.todo_compose.domain.usecase.DeleteTodo
 import com.vipuljha.todo_compose.domain.usecase.GetUncompletedTodos
 import com.vipuljha.todo_compose.domain.usecase.NoParams
+import com.vipuljha.todo_compose.presentation.todo_list.uncompleted.TodoEffect
+import com.vipuljha.todo_compose.presentation.todo_list.uncompleted.TodoIntent
+import com.vipuljha.todo_compose.presentation.todo_list.uncompleted.TodoPartialState
+import com.vipuljha.todo_compose.presentation.todo_list.uncompleted.TodoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +34,7 @@ import javax.inject.Inject
 class TodoViewModel @Inject constructor(
     private val updateTodo: AddOrUpdateTodo,
     private val deleteTodo: DeleteTodo,
-    private val getUncompletedTodos: GetUncompletedTodos
+    private val getUncompletedTodos: GetUncompletedTodos,
 ) : ViewModel() {
 
     private val intents = MutableSharedFlow<TodoIntent>(extraBufferCapacity = 1)

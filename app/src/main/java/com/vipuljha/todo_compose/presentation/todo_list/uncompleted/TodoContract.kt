@@ -1,4 +1,4 @@
-package com.vipuljha.todo_compose.presentation.todo_list
+package com.vipuljha.todo_compose.presentation.todo_list.uncompleted
 
 import com.vipuljha.todo_compose.domain.model.Todo
 
