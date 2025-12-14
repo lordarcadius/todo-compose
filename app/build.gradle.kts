@@ -91,4 +91,7 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    //Icons
+    implementation(libs.androidx.compose.material.icons.extended)
 }

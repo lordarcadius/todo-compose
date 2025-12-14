@@ -1,5 +1,10 @@
 package com.vipuljha.todo_compose.presentation.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavBackStack
@@ -29,6 +34,11 @@ fun AppNavigation(
                     onBack = { backStack.back() }
                 )
             }
-        }
+        },
+        predictivePopTransitionSpec = {
+            (slideInHorizontally { it } + fadeIn()).togetherWith(
+                slideOutHorizontally { -it } + fadeOut()
+            )
+        },
     )
 }
