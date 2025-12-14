@@ -2,6 +2,7 @@ package com.vipuljha.todo_compose.presentation.todo_list
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.vipuljha.todo_compose.core.util.Util
 import com.vipuljha.todo_compose.domain.model.Todo
 
 @Composable
@@ -55,20 +57,35 @@ fun TodoItem(todo: Todo, onDelete: (Todo) -> Unit, onEdit: (Todo) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(58.dp)
-                .padding(horizontal = 16.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = todo.title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.MiddleEllipsis,
-                modifier = Modifier
-                    .weight(1f)
-                    .basicMarquee(iterations = 20)
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = todo.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.MiddleEllipsis,
+                    modifier = Modifier
+                        .basicMarquee(iterations = 20)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = todo.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 4,
+                    overflow = TextOverflow.MiddleEllipsis,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = Util.formatTimestamp(todo.updatedAt),
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.MiddleEllipsis
+                )
+            }
             Spacer(modifier = Modifier.width(12.dp))
             IconButton(onClick = { onEdit(todo) }) {
                 Icon(Icons.Outlined.Edit, contentDescription = "Edit")
