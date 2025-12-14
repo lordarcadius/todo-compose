@@ -87,7 +87,7 @@ fun TodoItem(
                     text = todo.description,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 3,
+                    maxLines = 10,
                     overflow = TextOverflow.Ellipsis
                 )
             }
