@@ -1,4 +1,4 @@
-package com.vipuljha.todo_compose.ui.theme
+package com.vipuljha.todo_compose.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

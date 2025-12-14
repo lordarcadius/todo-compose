@@ -1,6 +1,5 @@
-package com.vipuljha.todo_compose.ui.theme
+package com.vipuljha.todo_compose.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
