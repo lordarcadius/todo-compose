@@ -1,7 +1,6 @@
 package com.vipuljha.todo_compose.presentation.todo_list
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -12,40 +11,40 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.vipuljha.todo_compose.domain.model.Todo
 
 @Composable
 fun TodoScreen(
     modifier: Modifier = Modifier,
-    viewModel: TodoViewModel = hiltViewModel()
+    viewModel: TodoViewModel = hiltViewModel(),
+    onEditClick: (Todo) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
-    when {
-        state.isLoading -> {
-            Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
+        when {
+            state.isLoading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-        }
 
-        state.error != null -> {
-            Box(modifier = modifier.fillMaxSize()) {
+            state.error != null -> {
                 Text(text = state.error!!, modifier = Modifier.align(Alignment.Center))
             }
-        }
 
-        else -> {
-            Column(modifier = modifier.fillMaxSize()) {
+            else -> {
                 if (state.todos.isEmpty()) {
-                    Box(modifier = modifier.fillMaxSize()) {
-                        Text(
-                            text = "Create your first Todo!",
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+                    Text(
+                        text = "Create your first Todo!",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 } else {
-                    state.todos.forEach {
-                        Text(text = it.title)
-                    }
+                    TodoList(
+                        todos = state.todos,
+                        onDelete = { viewModel.sendIntent(TodoIntent.Delete(it)) },
+                        onEdit = { todo ->
+                            onEditClick(todo)
+                        }
+                    )
                 }
             }
         }
@@ -59,5 +58,5 @@ fun TodoScreen(
 )
 @Composable
 fun TodoScreenPreview() {
-    TodoScreen()
+    TodoScreen(onEditClick = {})
 }
