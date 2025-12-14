@@ -14,6 +14,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.vipuljha.todo_compose.core.util.back
 import com.vipuljha.todo_compose.core.util.open
 import com.vipuljha.todo_compose.presentation.todo_edit.TodoEditScreen
+import com.vipuljha.todo_compose.presentation.todo_list.CompletedTodoScreen
 import com.vipuljha.todo_compose.presentation.todo_list.TodoScreen
 
 @Composable
@@ -30,6 +31,9 @@ fun AppNavigation(
                 TodoScreen(onEditClick = { todo ->
                     backStack.open(Route.TodoEdit(todo))
                 })
+            }
+            entry<Route.CompletedTodoList> {
+                CompletedTodoScreen()
             }
             entry<Route.TodoEdit> {
                 TodoEditScreen(

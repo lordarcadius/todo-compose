@@ -11,5 +11,8 @@ sealed interface Route : NavKey {
     data object TodoList : Route
 
     @Serializable
+    data object CompletedTodoList : Route
+
+    @Serializable
     data class TodoEdit(val todo: Todo?) : Route
 }
