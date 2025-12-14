@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -18,8 +17,9 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,14 +27,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vipuljha.todo_compose.core.util.Util
 import com.vipuljha.todo_compose.domain.model.Todo
 
 @Composable
-fun TodoList(todos: List<Todo>, onDelete: (Todo) -> Unit, onEdit: (Todo) -> Unit) {
+fun TodoList(
+    todos: List<Todo>,
+    onDelete: (Todo) -> Unit,
+    onEdit: (Todo) -> Unit
+) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
-        columns = GridCells.Adaptive(minSize = 340.dp),
+        columns = GridCells.Adaptive(340.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -44,56 +49,105 @@ fun TodoList(todos: List<Todo>, onDelete: (Todo) -> Unit, onEdit: (Todo) -> Unit
     }
 }
 
+
 @Composable
-fun TodoItem(todo: Todo, onDelete: (Todo) -> Unit, onEdit: (Todo) -> Unit) {
+fun TodoItem(
+    todo: Todo,
+    onDelete: (Todo) -> Unit,
+    onEdit: (Todo) -> Unit
+) {
+    val isDescriptionEmpty = todo.description.isBlank()
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
+        elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = todo.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.MiddleEllipsis,
-                    modifier = Modifier
-                        .basicMarquee(iterations = 20)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            Text(
+                text = todo.title,
+                style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(iterations = 20)
+            )
+
+            if (!isDescriptionEmpty) {
+                Spacer(Modifier.height(6.dp))
+            }
+
+            if (!isDescriptionEmpty) {
                 Text(
                     text = todo.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 4,
-                    overflow = TextOverflow.MiddleEllipsis,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = Util.formatTimestamp(todo.updatedAt),
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.MiddleEllipsis
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
-            Spacer(modifier = Modifier.width(12.dp))
-            IconButton(onClick = { onEdit(todo) }) {
-                Icon(Icons.Outlined.Edit, contentDescription = "Edit")
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TodoTimestamps(
+                    createdAt = todo.createdAt,
+                    updatedAt = todo.updatedAt
+                )
+
+                ActionButtons(
+                    onEdit = { onEdit(todo) },
+                    onDelete = { onDelete(todo) }
+                )
             }
-            Spacer(modifier = Modifier.width(4.dp))
-            IconButton(onClick = { onDelete(todo) }) {
-                Icon(Icons.Outlined.Delete, contentDescription = "Delete")
-            }
+        }
+    }
+}
+
+
+@Composable
+private fun TodoTimestamps(
+    createdAt: Long,
+    updatedAt: Long
+) {
+    Column {
+        Text(
+            text = "Created: ${Util.formatTimestamp(createdAt)}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.outline
+        )
+        Text(
+            text = "Updated: ${Util.formatTimestamp(updatedAt)}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.outline
+        )
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+        FilledTonalIconButton(onClick = onEdit) {
+            Icon(Icons.Outlined.Edit, contentDescription = "Edit")
+        }
+
+        FilledTonalIconButton(
+            onClick = onDelete,
+            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            )
+        ) {
+            Icon(Icons.Outlined.Delete, contentDescription = "Delete")
         }
     }
 }

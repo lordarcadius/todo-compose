@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
             floatingActionButton = {
                 if (showFab) {
                     FloatingActionButton(
-                        modifier = Modifier.padding(end = 6.dp, bottom = 32.dp),
+                        modifier = Modifier.padding(end = 6.dp, bottom = 24.dp),
                         onClick = {
                             backStack.open(Route.TodoEdit(null))
                         }) {
