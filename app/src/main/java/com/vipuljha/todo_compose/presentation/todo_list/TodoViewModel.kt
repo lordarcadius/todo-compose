@@ -1,4 +1,4 @@
-package com.vipuljha.todo_compose.presentation.todo
+package com.vipuljha.todo_compose.presentation.todo_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,9 +32,7 @@ class TodoViewModel @Inject constructor(
     private val getAllTodos: GetAllTodos
 ) : ViewModel() {
 
-    private val intents = MutableSharedFlow<TodoIntent>(
-        extraBufferCapacity = 1
-    )
+    private val intents = MutableSharedFlow<TodoIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(TodoState())
     val state: StateFlow<TodoState> = _state.asStateFlow()

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.vipuljha.todo_compose.presentation.theme.TodoComposeTheme
-import com.vipuljha.todo_compose.presentation.todo.TodoScreen
+import com.vipuljha.todo_compose.presentation.todo_list.TodoScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
