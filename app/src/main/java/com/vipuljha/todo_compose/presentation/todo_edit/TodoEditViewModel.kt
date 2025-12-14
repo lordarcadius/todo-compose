@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -36,18 +36,18 @@ class TodoEditViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<TodoEditEffect>()
     val effects = _effects.asSharedFlow()
 
-    fun sendIntent(intent: TodoEditIntent) {
-        intents.tryEmit(intent)
-    }
-
     init {
         bindIntents()
+    }
+
+    fun sendIntent(intent: TodoEditIntent) {
+        intents.tryEmit(intent)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun bindIntents() {
         intents
-            .flatMapLatest { handleIntent(it) }
+            .flatMapMerge { handleIntent(it) }
             .scan(TodoEditState(), ::reduce)
             .onEach { newState ->
                 _state.update { newState }
@@ -55,7 +55,7 @@ class TodoEditViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun handleIntent(intent: TodoEditIntent): Flow<TodoEditPartialState> =
+    private fun handleIntent(intent: TodoEditIntent): Flow<TodoEditPartialState> =
         when (intent) {
             is TodoEditIntent.Init -> flowOf(TodoEditPartialState.DataLoaded(intent.todo))
             is TodoEditIntent.TitleChanged -> flowOf(TodoEditPartialState.TitleUpdated(intent.title))

@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -50,7 +50,7 @@ class TodoViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun bindIntents() {
         intents
-            .flatMapLatest { handleIntent(it) }
+            .flatMapMerge { handleIntent(it) }
             .scan(TodoState(), ::reduce)
             .onEach { newState ->
                 _state.update { newState }
