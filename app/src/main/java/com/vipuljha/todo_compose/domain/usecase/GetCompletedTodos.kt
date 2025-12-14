@@ -5,10 +5,10 @@ import com.vipuljha.todo_compose.domain.repository.TodoRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetAllTodos @Inject constructor(
+class GetCompletedTodos @Inject constructor(
     private val todoRepo: TodoRepo
 ) : BaseFlowUseCase<NoParams, List<Todo>> {
     override fun invoke(params: NoParams): Flow<List<Todo>> {
-        return todoRepo.getAllTodos()
+        return todoRepo.getCompletedTodos()
     }
 }

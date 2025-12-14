@@ -34,10 +34,36 @@ class TodoRepoImpl @Inject constructor(
         }
     }
 
-    override fun getTodos(): Flow<List<Todo>> {
+    override fun getAllTodos(): Flow<List<Todo>> {
         try {
             return todoDao
                 .getTodos()
+                .map { entities ->
+                    entities.map { it.toDomain() }
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return emptyFlow()
+        }
+    }
+
+    override fun getCompletedTodos(): Flow<List<Todo>> {
+        try {
+            return todoDao
+                .getCompletedTodos()
+                .map { entities ->
+                    entities.map { it.toDomain() }
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return emptyFlow()
+        }
+    }
+
+    override fun getUncompletedTodos(): Flow<List<Todo>> {
+        try {
+            return todoDao
+                .getUncompletedTodos()
                 .map { entities ->
                     entities.map { it.toDomain() }
                 }

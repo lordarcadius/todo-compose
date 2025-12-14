@@ -58,6 +58,9 @@ fun TodoScreen(
                         onDelete = { viewModel.sendIntent(TodoIntent.Delete(it)) },
                         onEdit = { todo ->
                             onEditClick(todo)
+                        },
+                        onDone = { todo ->
+                            viewModel.sendIntent(TodoIntent.MarkCompleted(todo))
                         }
                     )
                 }

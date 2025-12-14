@@ -3,8 +3,9 @@ package com.vipuljha.todo_compose.presentation.todo_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vipuljha.todo_compose.domain.model.Todo
+import com.vipuljha.todo_compose.domain.usecase.AddOrUpdateTodo
 import com.vipuljha.todo_compose.domain.usecase.DeleteTodo
-import com.vipuljha.todo_compose.domain.usecase.GetAllTodos
+import com.vipuljha.todo_compose.domain.usecase.GetUncompletedTodos
 import com.vipuljha.todo_compose.domain.usecase.NoParams
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,8 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TodoViewModel @Inject constructor(
+    private val updateTodo: AddOrUpdateTodo,
     private val deleteTodo: DeleteTodo,
-    private val getAllTodos: GetAllTodos
+    private val getUncompletedTodos: GetUncompletedTodos
 ) : ViewModel() {
 
     private val intents = MutableSharedFlow<TodoIntent>(extraBufferCapacity = 1)
@@ -62,12 +64,13 @@ class TodoViewModel @Inject constructor(
         when (intent) {
             TodoIntent.LoadTodos -> loadTodos()
             is TodoIntent.Delete -> delete(intent.todo)
+            is TodoIntent.MarkCompleted -> markCompleted(intent.todo)
         }
 
     private fun loadTodos(): Flow<TodoPartialState> = flow {
         emit(TodoPartialState.Loading)
         emitAll(
-            getAllTodos(NoParams)
+            getUncompletedTodos(NoParams)
                 .map { todos ->
                     TodoPartialState.TodosLoaded(todos)
                 }
@@ -100,6 +103,28 @@ class TodoViewModel @Inject constructor(
         }
     }
 
+    private fun markCompleted(todo: Todo): Flow<TodoPartialState> = flow {
+        if (todo.id == 0) {
+            emit(TodoPartialState.Error("Nothing to mark completed"))
+            return@flow
+        }
+
+        val todo = Todo(
+            id = todo.id,
+            title = todo.title,
+            description = todo.description,
+            isCompleted = true
+        )
+        if (updateTodo(todo)) {
+            emit(TodoPartialState.TodoDeleted)
+            _effects.emit(TodoEffect.ShowToast("Task completed!"))
+        } else {
+            val errorMessage = "Failed to mark task completed"
+            emit(TodoPartialState.Error(errorMessage))
+            _effects.emit(TodoEffect.ShowToast(errorMessage))
+        }
+    }
+
     private fun reduce(
         previous: TodoState,
         change: TodoPartialState
@@ -117,6 +142,7 @@ class TodoViewModel @Inject constructor(
                     error = null
                 )
 
+            is TodoPartialState.TodoCompleted,
             TodoPartialState.TodoDeleted ->
                 previous.copy(isLoading = false)
 

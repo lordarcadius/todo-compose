@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,7 +36,8 @@ import com.vipuljha.todo_compose.domain.model.Todo
 fun TodoList(
     todos: List<Todo>,
     onDelete: (Todo) -> Unit,
-    onEdit: (Todo) -> Unit
+    onEdit: (Todo) -> Unit,
+    onDone: (Todo) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -44,7 +46,7 @@ fun TodoList(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(items = todos, key = { it.id }) { todo ->
-            TodoItem(todo = todo, onDelete = onDelete, onEdit = onEdit)
+            TodoItem(todo = todo, onDelete = onDelete, onEdit = onEdit, onDone = onDone)
         }
     }
 }
@@ -54,7 +56,8 @@ fun TodoList(
 fun TodoItem(
     todo: Todo,
     onDelete: (Todo) -> Unit,
-    onEdit: (Todo) -> Unit
+    onEdit: (Todo) -> Unit,
+    onDone: (Todo) -> Unit,
 ) {
     val isDescriptionEmpty = todo.description.isBlank()
     Card(
@@ -102,7 +105,8 @@ fun TodoItem(
 
                 ActionButtons(
                     onEdit = { onEdit(todo) },
-                    onDelete = { onDelete(todo) }
+                    onDelete = { onDelete(todo) },
+                    onDone = { onDone(todo) }
                 )
             }
         }
@@ -131,14 +135,11 @@ private fun TodoTimestamps(
 
 @Composable
 private fun ActionButtons(
+    onDelete: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDone: () -> Unit
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-
-        FilledTonalIconButton(onClick = onEdit) {
-            Icon(Icons.Outlined.Edit, contentDescription = "Edit")
-        }
 
         FilledTonalIconButton(
             onClick = onDelete,
@@ -148,6 +149,14 @@ private fun ActionButtons(
             )
         ) {
             Icon(Icons.Outlined.Delete, contentDescription = "Delete")
+        }
+
+        FilledTonalIconButton(onClick = onEdit) {
+            Icon(Icons.Outlined.Edit, contentDescription = "Edit")
+        }
+
+        FilledTonalIconButton(onClick = onDone) {
+            Icon(Icons.Outlined.Done, contentDescription = "Done")
         }
     }
 }

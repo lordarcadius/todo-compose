@@ -5,11 +5,11 @@ import com.vipuljha.todo_compose.domain.model.Todo
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Route: NavKey {
+sealed interface Route : NavKey {
 
     @Serializable
-    data object TodoList: Route
+    data object TodoList : Route
 
     @Serializable
-    data class TodoEdit(val todo: Todo?): Route
+    data class TodoEdit(val todo: Todo?) : Route
 }

@@ -18,4 +18,10 @@ interface TodoDao {
     @Query("SELECT * FROM todos ORDER by updatedAt DESC")
     fun getTodos(): Flow<List<TodoEntity>>
 
+    @Query("SELECT * FROM todos WHERE isCompleted = 1 ORDER by updatedAt DESC")
+    fun getCompletedTodos(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM todos WHERE isCompleted = 0 ORDER by updatedAt DESC")
+    fun getUncompletedTodos(): Flow<List<TodoEntity>>
+
 }
